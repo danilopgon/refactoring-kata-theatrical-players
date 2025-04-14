@@ -17,6 +17,10 @@ export function statement(
   summary: PerformanceSummary,
   plays: Record<string, Play>
 ) {
+  return renderStatement(summary, plays);
+}
+
+function renderStatement(summary: PerformanceSummary, plays: Record<string, Play>) {
   let totalAmount = calculateTotalAmount(summary, plays);
 
   let result = `Statement for ${summary.customer}\n`;
@@ -24,9 +28,7 @@ export function statement(
     const play = plays[perf.playID];
     let thisAmount = calculateAmount(play, perf);
 
-    result += ` ${play.name}: ${formatAsUSD(thisAmount)} (${
-      perf.audience
-    } seats)\n`;
+    result += ` ${play.name}: ${formatAsUSD(thisAmount)} (${perf.audience} seats)\n`;
   }
 
   result += `Amount owed is ${formatAsUSD(totalAmount)}\n`;
