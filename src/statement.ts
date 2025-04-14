@@ -35,14 +35,14 @@ export function statement(
   return result;
 }
 
-function calculateVolumeCredits(summary: PerformanceSummary, plays: Record<string, Play>) {
-  let volumeCredits = 0;
-
-  for (let perf of summary.performances) {
+function calculateVolumeCredits(
+  summary: PerformanceSummary,
+  plays: Record<string, Play>
+) {
+  return summary.performances.reduce((totalCredits, perf) => {
     const play = plays[perf.playID];
-    volumeCredits += calculateCredits(play, perf);
-  }
-  return volumeCredits;
+    return totalCredits + calculateCredits(play, perf);
+  }, 0);
 }
 
 function calculateCredits(play: Play, perf: Performance) {
