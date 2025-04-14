@@ -13,14 +13,30 @@ type PerformanceSummary = {
   performances: Performance[];
 };
 
+type Statement = {
+  readonly customer: string;
+  readonly performances: PerformanceRow[];
+  readonly totalAmountInUSD: string;
+  readonly totalCredits: number;
+};
+
+type PerformanceRow = {
+  readonly playName: string;
+  readonly audience: number;
+  readonly amountInUSD: string;
+};
+
 export function statement(
   summary: PerformanceSummary,
   plays: Record<string, Play>
 ) {
-  return renderStatement(summary, plays);
+  return renderStatementAsPlainText(summary, plays);
 }
 
-function renderStatement(summary: PerformanceSummary, plays: Record<string, Play>) {
+function renderStatementAsPlainText(
+  summary: PerformanceSummary,
+  plays: Record<string, Play>
+) {
   let totalAmount = calculateTotalAmount(summary, plays);
 
   let result = `Statement for ${summary.customer}\n`;
@@ -28,7 +44,9 @@ function renderStatement(summary: PerformanceSummary, plays: Record<string, Play
     const play = plays[perf.playID];
     let thisAmount = calculateAmount(play, perf);
 
-    result += ` ${play.name}: ${formatAsUSD(thisAmount)} (${perf.audience} seats)\n`;
+    result += ` ${play.name}: ${formatAsUSD(thisAmount)} (${
+      perf.audience
+    } seats)\n`;
   }
 
   result += `Amount owed is ${formatAsUSD(totalAmount)}\n`;
