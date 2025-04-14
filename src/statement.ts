@@ -26,11 +26,8 @@ export function statement(summary: PerformanceSummary, plays: Record<string, Pla
   for (let perf of summary.performances) {
     const play = plays[perf.playID];
     let thisAmount = calculateAmount(play, perf);
-    // add volume credits
-    volumeCredits += Math.max(perf.audience - 30, 0);
-    // add extra credit for every ten comedy attendees
-    if ("comedy" === play.type) volumeCredits += Math.floor(perf.audience / 5);
-    // print line for this order
+    volumeCredits += calculateCredits(perf, play);
+    
     result += ` ${play.name}: ${format(thisAmount / 100)} (${
       perf.audience
     } seats)\n`;
@@ -41,24 +38,32 @@ export function statement(summary: PerformanceSummary, plays: Record<string, Pla
   return result;
 }
 
+function calculateCredits(perf: Performance, play: Play) {
+  let credits = 0;
+  credits += Math.max(perf.audience - 30, 0);
+  // add extra credit for every ten comedy attendees
+  if ("comedy" === play.type) credits += Math.floor(perf.audience / 5);
+  return credits;
+}
+
 function calculateAmount(play: Play, performance: Performance) {
-  let totalAmount = 0;
+  let thisAmount = 0;
   switch (play.type) {
     case "tragedy":
-      totalAmount = 40000;
+      thisAmount = 40000;
       if (performance.audience > 30) {
-        totalAmount += 1000 * (performance.audience - 30);
+        thisAmount += 1000 * (performance.audience - 30);
       }
       break;
     case "comedy":
-      totalAmount = 30000;
+      thisAmount = 30000;
       if (performance.audience > 20) {
-        totalAmount += 10000 + 500 * (performance.audience - 20);
+        thisAmount += 10000 + 500 * (performance.audience - 20);
       }
-      totalAmount += 300 * performance.audience;
+      thisAmount += 300 * performance.audience;
       break;
     default:
       throw new Error(`unknown type: ${play.type}`);
   }
-  return totalAmount;
+  return thisAmount;
 }
