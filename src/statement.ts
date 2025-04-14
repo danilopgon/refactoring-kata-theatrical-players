@@ -13,13 +13,16 @@ type PerformanceSummary = {
   performances: Performance[];
 };
 
-export function statement(summary: PerformanceSummary, plays: Record<string, Play>) {
+export function statement(
+  summary: PerformanceSummary,
+  plays: Record<string, Play>
+) {
   let totalAmount = 0;
   let volumeCredits = 0;
   let result = `Statement for ${summary.customer}\n`;
-  const format = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
+  const format = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
     minimumFractionDigits: 2,
   }).format;
 
@@ -43,20 +46,22 @@ function calculateCredits(perf: Performance, play: Play) {
   const baseCredits = Math.max(perf.audience - 30, 0);
   credits += baseCredits;
   const extraCreditsForComedyAttendees = Math.floor(perf.audience / 5);
-  if ("comedy" === play.type) credits += extraCreditsForComedyAttendees;
-  return credits;
+
+  return play.type === 'comedy'
+    ? credits + extraCreditsForComedyAttendees
+    : credits;
 }
 
 function calculateAmount(play: Play, performance: Performance) {
   let thisAmount = 0;
   switch (play.type) {
-    case "tragedy":
+    case 'tragedy':
       thisAmount = 40000;
       if (performance.audience > 30) {
         thisAmount += 1000 * (performance.audience - 30);
       }
       break;
-    case "comedy":
+    case 'comedy':
       thisAmount = 30000;
       if (performance.audience > 20) {
         thisAmount += 10000 + 500 * (performance.audience - 20);
