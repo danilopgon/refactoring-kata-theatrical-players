@@ -18,19 +18,22 @@ export function statement(
   plays: Record<string, Play>
 ) {
   let totalAmount = 0;
-  let result = `Statement for ${summary.customer}\n`;
+  for (let perf of summary.performances) {
+    const play = plays[perf.playID];
+    totalAmount += calculateAmount(play, perf);
+  }
 
+  let result = `Statement for ${summary.customer}\n`;
   for (let perf of summary.performances) {
     const play = plays[perf.playID];
     let thisAmount = calculateAmount(play, perf);
 
-    result += ` ${play.name}: ${formatAsUSD(thisAmount / 100)} (${
+    result += ` ${play.name}: ${formatAsUSD(thisAmount)} (${
       perf.audience
     } seats)\n`;
-    totalAmount += thisAmount;
   }
 
-  result += `Amount owed is ${formatAsUSD(totalAmount / 100)}\n`;
+  result += `Amount owed is ${formatAsUSD(totalAmount)}\n`;
   result += `You earned ${calculateVolumeCredits(summary, plays)} credits\n`;
   return result;
 }
@@ -83,5 +86,5 @@ function formatAsUSD(amount: number) {
     style: 'currency',
     currency: 'USD',
     minimumFractionDigits: 2,
-  }).format(amount);
+  }).format(amount / 100);
 }
