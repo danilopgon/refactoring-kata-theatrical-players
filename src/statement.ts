@@ -30,10 +30,8 @@ export function statement(
     totalAmount += thisAmount;
   }
 
-  let volumeCredits = calculateVolumeCredits(summary, plays);
-
   result += `Amount owed is ${formatAsUSD(totalAmount / 100)}\n`;
-  result += `You earned ${volumeCredits} credits\n`;
+  result += `You earned ${calculateVolumeCredits(summary, plays)} credits\n`;
   return result;
 }
 
