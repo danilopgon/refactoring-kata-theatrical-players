@@ -29,7 +29,7 @@ export function statement(
   for (let perf of summary.performances) {
     const play = plays[perf.playID];
     let thisAmount = calculateAmount(play, perf);
-    volumeCredits += calculateCredits(perf, play);
+    volumeCredits += calculateCredits(play, perf);
 
     result += ` ${play.name}: ${format(thisAmount / 100)} (${
       perf.audience
@@ -41,7 +41,7 @@ export function statement(
   return result;
 }
 
-function calculateCredits(perf: Performance, play: Play) {
+function calculateCredits(play: Play, perf: Performance) {
   let credits = 0;
   const baseCredits = Math.max(perf.audience - 30, 0);
   credits += baseCredits;
