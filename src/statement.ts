@@ -18,19 +18,25 @@ export function statement(
   plays: Record<string, Play>
 ) {
   let totalAmount = 0;
-  let volumeCredits = 0;
   let result = `Statement for ${summary.customer}\n`;
 
   for (let perf of summary.performances) {
     const play = plays[perf.playID];
     let thisAmount = calculateAmount(play, perf);
-    volumeCredits += calculateCredits(play, perf);
 
     result += ` ${play.name}: ${formatAsUSD(thisAmount / 100)} (${
       perf.audience
     } seats)\n`;
     totalAmount += thisAmount;
   }
+
+  let volumeCredits = 0;
+
+  for (let perf of summary.performances) {
+    const play = plays[perf.playID];
+    volumeCredits += calculateCredits(play, perf);
+  }
+
   result += `Amount owed is ${formatAsUSD(totalAmount / 100)}\n`;
   result += `You earned ${volumeCredits} credits\n`;
   return result;
