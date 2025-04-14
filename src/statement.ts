@@ -17,11 +17,7 @@ export function statement(
   summary: PerformanceSummary,
   plays: Record<string, Play>
 ) {
-  let totalAmount = 0;
-  for (let perf of summary.performances) {
-    const play = plays[perf.playID];
-    totalAmount += calculateAmount(play, perf);
-  }
+  let totalAmount = calculateTotalAmount(summary, plays);
 
   let result = `Statement for ${summary.customer}\n`;
   for (let perf of summary.performances) {
@@ -38,25 +34,14 @@ export function statement(
   return result;
 }
 
-function calculateVolumeCredits(
+function calculateTotalAmount(
   summary: PerformanceSummary,
   plays: Record<string, Play>
 ) {
-  return summary.performances.reduce((totalCredits, perf) => {
+  return summary.performances.reduce((totalAmount, perf) => {
     const play = plays[perf.playID];
-    return totalCredits + calculateCredits(play, perf);
+    return totalAmount + calculateAmount(play, perf);
   }, 0);
-}
-
-function calculateCredits(play: Play, perf: Performance) {
-  let credits = 0;
-  const baseCredits = Math.max(perf.audience - 30, 0);
-  credits += baseCredits;
-  const extraCreditsForComedyAttendees = Math.floor(perf.audience / 5);
-
-  return play.type === 'comedy'
-    ? credits + extraCreditsForComedyAttendees
-    : credits;
 }
 
 function calculateAmount(play: Play, performance: Performance) {
@@ -79,6 +64,27 @@ function calculateAmount(play: Play, performance: Performance) {
       throw new Error(`unknown type: ${play.type}`);
   }
   return thisAmount;
+}
+
+function calculateVolumeCredits(
+  summary: PerformanceSummary,
+  plays: Record<string, Play>
+) {
+  return summary.performances.reduce((totalCredits, perf) => {
+    const play = plays[perf.playID];
+    return totalCredits + calculateCredits(play, perf);
+  }, 0);
+}
+
+function calculateCredits(play: Play, perf: Performance) {
+  let credits = 0;
+  const baseCredits = Math.max(perf.audience - 30, 0);
+  credits += baseCredits;
+  const extraCreditsForComedyAttendees = Math.floor(perf.audience / 5);
+
+  return play.type === 'comedy'
+    ? credits + extraCreditsForComedyAttendees
+    : credits;
 }
 
 function formatAsUSD(amount: number) {
