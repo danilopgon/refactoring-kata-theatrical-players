@@ -27,7 +27,7 @@ export function statement(summary: PerformanceSummary, plays: Record<string, Pla
     const play = plays[perf.playID];
     let thisAmount = calculateAmount(play, perf);
     volumeCredits += calculateCredits(perf, play);
-    
+
     result += ` ${play.name}: ${format(thisAmount / 100)} (${
       perf.audience
     } seats)\n`;
@@ -40,9 +40,10 @@ export function statement(summary: PerformanceSummary, plays: Record<string, Pla
 
 function calculateCredits(perf: Performance, play: Play) {
   let credits = 0;
-  credits += Math.max(perf.audience - 30, 0);
-  // add extra credit for every ten comedy attendees
-  if ("comedy" === play.type) credits += Math.floor(perf.audience / 5);
+  const baseCredits = Math.max(perf.audience - 30, 0);
+  credits += baseCredits;
+  const extraCreditsForComedyAttendees = Math.floor(perf.audience / 5);
+  if ("comedy" === play.type) credits += extraCreditsForComedyAttendees;
   return credits;
 }
 
