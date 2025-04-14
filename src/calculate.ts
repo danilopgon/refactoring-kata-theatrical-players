@@ -1,5 +1,3 @@
-
-
 export type Play = {
   name: string;
   type: string;
@@ -17,7 +15,8 @@ export type PerformanceSummary = {
 
 export function calculateTotalAmount(
   summary: PerformanceSummary,
-  plays: Record<string, Play>) {
+  plays: Record<string, Play>
+) {
   return summary.performances.reduce((totalAmount, perf) => {
     const play = plays[perf.playID];
     return totalAmount + calculateAmount(play, perf);
@@ -46,7 +45,8 @@ export function calculateAmount(play: Play, performance: Performance) {
 }
 export function calculateVolumeCredits(
   summary: PerformanceSummary,
-  plays: Record<string, Play>) {
+  plays: Record<string, Play>
+) {
   return summary.performances.reduce((totalCredits, perf) => {
     const play = plays[perf.playID];
     return totalCredits + calculateCredits(play, perf);
