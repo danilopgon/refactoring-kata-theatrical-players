@@ -20,23 +20,18 @@ export function statement(
   let totalAmount = 0;
   let volumeCredits = 0;
   let result = `Statement for ${summary.customer}\n`;
-  const format = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 2,
-  }).format;
 
   for (let perf of summary.performances) {
     const play = plays[perf.playID];
     let thisAmount = calculateAmount(play, perf);
     volumeCredits += calculateCredits(play, perf);
 
-    result += ` ${play.name}: ${format(thisAmount / 100)} (${
+    result += ` ${play.name}: ${formatAsUSD(thisAmount / 100)} (${
       perf.audience
     } seats)\n`;
     totalAmount += thisAmount;
   }
-  result += `Amount owed is ${format(totalAmount / 100)}\n`;
+  result += `Amount owed is ${formatAsUSD(totalAmount / 100)}\n`;
   result += `You earned ${volumeCredits} credits\n`;
   return result;
 }
@@ -72,4 +67,12 @@ function calculateAmount(play: Play, performance: Performance) {
       throw new Error(`unknown type: ${play.type}`);
   }
   return thisAmount;
+}
+
+function formatAsUSD(amount: number) {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+  }).format(amount);
 }
