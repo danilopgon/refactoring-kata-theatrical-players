@@ -31,28 +31,39 @@ export function calculateAmount(play: Play, performance: Performance) {
   const isUnknownPlayType = !Object.values(PlayType).includes(
     play.type as PlayType
   );
+
   if (isUnknownPlayType) {
     throw new Error(`unknown type: ${play.type}`);
   }
 
-  let thisAmount = 0;
-  switch (play.type) {
-    case PlayType.TRAGEDY:
-      thisAmount = 40000;
-      if (performance.audience > 30) {
-        thisAmount += 1000 * (performance.audience - 30);
-      }
-      break;
-    case PlayType.COMEDY:
-      thisAmount = 30000;
-      if (performance.audience > 20) {
-        thisAmount += 10000 + 500 * (performance.audience - 20);
-      }
-      thisAmount += 300 * performance.audience;
-      break;
+  if (play.type === PlayType.COMEDY) {
+    return calculateComedyAmount(performance);
   }
-  return thisAmount;
+
+  if (play.type === PlayType.TRAGEDY) {
+    return calculateTragedyAmount(performance);
+  }
+
+  return 0;
 }
+
+function calculateComedyAmount(performance: Performance) {
+  let totalAmountForComedy = 30000;
+  if (performance.audience > 20) {
+    totalAmountForComedy += 10000 + 500 * (performance.audience - 20);
+  }
+  totalAmountForComedy += 300 * performance.audience;
+  return totalAmountForComedy;
+}
+
+function calculateTragedyAmount(performance: Performance) {
+  let totalAmountForTragedy = 40000;
+  if (performance.audience > 30) {
+    totalAmountForTragedy += 1000 * (performance.audience - 30);
+  }
+  return totalAmountForTragedy;
+}
+
 export function calculateVolumeCredits(
   summary: PerformanceSummary,
   plays: Record<string, Play>
